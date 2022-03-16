@@ -5,6 +5,7 @@ import { Table, Space, Modal, Dialog } from "antd";
 import axios from "axios";
 import DialogAdd from "./DialogAdd";
 import DialogDetail from "./DialogDetail";
+import DialogUpdate from "./DialogUpdate";
 // const themes = {
 //   dark: `${process.env.PUBLIC_URL}/dark-theme.css`,
 //   light: `${process.env.PUBLIC_URL}/light-theme.css`,
@@ -18,11 +19,12 @@ const Home = () => {
   const [employees, setEmployees] = React.useState([]);
   const [isDialogAdd, setIsDialogAdd] = useState(false);
   const [isDialogDetail, setIsDialogDetail] = useState(false);
+  const [isDialogUpdate, setIsDialogUpdate] = useState(false);
   const [idForView, setIdForView] = useState(0);
 
-  const openDialogDetail = () => {
-    setIsDialogDetail(true);
-  };
+  // const openDialogDetail = () => {
+  //   setIsDialogDetail(true);
+  // };
 
   const handleClickViewButton = (id) => {
     // console.log(id);
@@ -31,9 +33,14 @@ const Home = () => {
       // await openDialogDetail();
       await setIsDialogDetail(true);
     };
-
   };
 
+  const handleClickUpdateButton = (id) => {
+    return async function (event) {
+      await setIdForView(id);
+      await setIsDialogUpdate(true);
+    };
+  };
 
   const columns = [
     {
@@ -66,10 +73,10 @@ const Home = () => {
               >
                 View
               </button>
-              <button className="btn btn-outline-primary glo-button-margin">
+              <button className="btn btn-outline-primary glo-button-margin" onClick={handleClickUpdateButton(data.id)}>
                 Update
               </button>
-              <button className="btn btn-outline-danger glo-button-margin">
+              <button className="btn btn-outline-danger glo-button-margin" onClick={() => deletePost(data.id)}>
                 Delete
               </button>
             </div>
@@ -84,6 +91,7 @@ const Home = () => {
     getEmployees();
 
     setIsDialogDetail(false);
+    // setIsDialogUpdate(false);
   }, []);
 
   //get all
@@ -94,8 +102,6 @@ const Home = () => {
     });
   };
 
-  
-
   //button add start
   const openDialogAdd = () => {
     setIsDialogAdd(true);
@@ -105,6 +111,15 @@ const Home = () => {
   //button view start
 
   //button view end
+
+  //delete
+  function deletePost(id) {
+    axios
+      .delete(`https://training.morethanteam.tech/training/employees/${id}`)
+      .then(() => {
+        getEmployees();
+      });
+  }
 
   return (
     <>
@@ -136,13 +151,16 @@ const Home = () => {
         <DialogDetail
           openDetail={isDialogDetail}
           setOpenDetail={setIsDialogDetail}
-          id={employees.id}
+          id={idForView}
         />
-       
+        <DialogUpdate
+          openUpdate={isDialogUpdate}
+          setOpenUpdate={setIsDialogUpdate}
+          id={idForView}
+        />
       </div>
     </>
   );
 };
-
 
 export default Home;

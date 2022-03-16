@@ -4,24 +4,21 @@ import "../../assets/css/content.css";
 import axios from "axios";
 
 const DialogDetail = ({ openDetail, setOpenDetail, id }) => {
-  const [name, setName] = useState("");
-  const [day_of_birth, setBirthday] = useState("");
-  const [address, setAddress] = useState("");
-  const [employee, setEmployee] = useState(null);
+  const [employee, setEmployee] = useState({
+    name: "",
+    day_of_birth: "",
+    address: "",
+  });
 
   React.useEffect(() => {
-    console.log("111111111111");
     console.log(id);
-    console.log(name);
     axios
       .get(`https://training.morethanteam.tech/training/employees/${id}`)
       .then((response) => {
-        setEmployee(response.data);
-        setName("");
-        setBirthday("");
-        setAddress("");
+        console.log(response);
+        setEmployee(response.data.result);
       });
-  }, []);
+  }, [id]);
 
   const handleOk = () => {
     setOpenDetail(true);
@@ -38,20 +35,23 @@ const DialogDetail = ({ openDetail, setOpenDetail, id }) => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <p>{id}</p>
-        <p>Name: {name}</p>
-        <p>{day_of_birth}</p>
+
         <div className="form-group">
           <label>Name</label>
-          <input type="text" className="form-control" id="name" defaultValue={name} />
+          <input
+            type="text"
+            className="form-control"
+            id="name"
+            value={employee.name}
+          />
         </div>
         <div className="form-group padding-top">
           <label>Day of birth</label>
           <input
-            type="date"
+            type="datetime"
             className="form-control"
             id="day_of_birth"
-            //   value={employees.birthday}
+            value={employee.day_of_birth}
           />
         </div>
         <div className="form-group padding-top">
@@ -60,8 +60,7 @@ const DialogDetail = ({ openDetail, setOpenDetail, id }) => {
             type="text"
             className="form-control"
             id="address"
-            placeholder="Enter address"
-            //   value={employees.address}
+            value={employee.address}
           />
         </div>
       </Modal>
