@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import Header from "./layouts/header/Header";
 import Employees from "./views/employees/Employees";
 import Home from "./views/home/Home";
@@ -23,7 +23,6 @@ function App() {
           </Switch>
         </div>
       </div>
-     
       <Footer/>
     </Router>
   );

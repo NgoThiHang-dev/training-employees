@@ -13,7 +13,7 @@ body{
     width: 80%;
     margin: 0 auto;
     padding:20px;
-    height: calc(100vh - 160px);
+    height: calc(100vh - 156px);
     box-sizing: border-box;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
