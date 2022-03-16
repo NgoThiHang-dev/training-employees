@@ -1,0 +1,15 @@
+footer {
+  box-sizing: border-box;
+  height: 100px;
+  background-color: #333;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 35px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  color: #fff;
+}
+
+footer a {
+  color: #ff8b00;
+}
