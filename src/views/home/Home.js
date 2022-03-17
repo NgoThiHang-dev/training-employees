@@ -1,36 +1,34 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { ThemeSwitcherProvider } from "react-css-theme-switcher";
+import React, { useContext, useState } from "react";
 import { Table, Space, Modal, Dialog } from "antd";
 import axios from "axios";
 import DialogAdd from "./DialogAdd";
 import DialogDetail from "./DialogDetail";
 import DialogUpdate from "./DialogUpdate";
-// const themes = {
-//   dark: `${process.env.PUBLIC_URL}/dark-theme.css`,
-//   light: `${process.env.PUBLIC_URL}/light-theme.css`,
-// };
+import Swal from "sweetalert2";
+// import { StoreContext } from "../../layouts/header/Header";
+
+import { ThemeContext } from "../../views/theme/ThemeContext";
+
+import { layoutAction } from "../../context/actions/layout/layoutAction";
+import { GlobalContext } from "../../context/Provider";
+
 const baseURL = "https://training.morethanteam.tech/training/employees/";
 
-//Chị map employee chỗ nào
-//k có sử dụng map á
-
 const Home = () => {
+  const { darkMode } = useContext(ThemeContext);
+
   const [employees, setEmployees] = React.useState([]);
   const [isDialogAdd, setIsDialogAdd] = useState(false);
   const [isDialogDetail, setIsDialogDetail] = useState(false);
   const [isDialogUpdate, setIsDialogUpdate] = useState(false);
   const [idForView, setIdForView] = useState(0);
 
-  // const openDialogDetail = () => {
-  //   setIsDialogDetail(true);
-  // };
+  // const { theme } = React.useContext(StoreContext);
 
   const handleClickViewButton = (id) => {
     // console.log(id);
     return async function (event) {
       await setIdForView(id);
-      // await openDialogDetail();
       await setIsDialogDetail(true);
     };
   };
@@ -40,6 +38,37 @@ const Home = () => {
       await setIdForView(id);
       await setIsDialogUpdate(true);
     };
+  };
+
+  const {
+    layoutState: {
+      layout: { theme },
+    },
+    layoutDispatch,
+  } = useContext(GlobalContext);
+
+  const writeGlobal = () => {
+    layoutAction.setThemeForLayout("aba")(layoutDispatch);
+  };
+
+  React.useEffect(() => {
+    getEmployees();
+
+    setIsDialogDetail(false);
+    // console.log(theme)
+  }, []);
+
+  //get all
+
+  const getEmployees = async () => {
+    await axios.get(baseURL).then((response) => {
+      setEmployees(response.data.result);
+    });
+  };
+
+  //button add start
+  const openDialogAdd = () => {
+    setIsDialogAdd(true);
   };
 
   const columns = [
@@ -73,10 +102,16 @@ const Home = () => {
               >
                 View
               </button>
-              <button className="btn btn-outline-primary glo-button-margin" onClick={handleClickUpdateButton(data.id)}>
+              <button
+                className="btn btn-outline-primary glo-button-margin"
+                onClick={handleClickUpdateButton(data.id)}
+              >
                 Update
               </button>
-              <button className="btn btn-outline-danger glo-button-margin" onClick={() => deletePost(data.id)}>
+              <button
+                className="btn btn-outline-danger glo-button-margin"
+                onClick={() => handleClickDeleteButton(data.id)}
+              >
                 Delete
               </button>
             </div>
@@ -86,40 +121,31 @@ const Home = () => {
     },
   ];
 
-  React.useEffect(() => {
-    //get all
-    getEmployees();
-
-    setIsDialogDetail(false);
-    // setIsDialogUpdate(false);
-  }, []);
-
-  //get all
-
-  const getEmployees = async () => {
-    await axios.get(baseURL).then((response) => {
-      setEmployees(response.data.result);
+  function handleClickDeleteButton(id) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "User will have Admin Privileges",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes!",
+      dangerMode: true,
+    }).then((result) => {
+      console.log(result.isConfirmed);
+      if (result.isConfirmed) {
+        axios
+          .delete(`https://training.morethanteam.tech/training/employees/${id}`)
+          .then(() => {
+            getEmployees();
+          });
+      }
     });
-  };
-
-  //button add start
-  const openDialogAdd = () => {
-    setIsDialogAdd(true);
-  };
-  //button add end
-
-  //button view start
-
-  //button view end
-
-  //delete
-  function deletePost(id) {
-    axios
-      .delete(`https://training.morethanteam.tech/training/employees/${id}`)
-      .then(() => {
-        getEmployees();
-      });
   }
+
+  // const deleteEmployees{
+
+  // }
 
   return (
     <>
@@ -156,6 +182,7 @@ const Home = () => {
         <DialogUpdate
           openUpdate={isDialogUpdate}
           setOpenUpdate={setIsDialogUpdate}
+          getEmployees={getEmployees}
           id={idForView}
         />
       </div>

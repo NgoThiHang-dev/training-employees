@@ -26,3 +26,6 @@ body{
 .glo-button-margin{
     margin-right: 10px;
 }
+.dark{
+    background-color: black;
+}
